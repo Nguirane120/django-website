@@ -11,10 +11,18 @@
                 <a href="" class="btn btn-primary btn-block">Create custumer</a>
                 <table class="table table-sm">
                     <tr>
-                        <th></th>
+                        
                         <th>Custumer</th>
-                        <th>Order</th>
+                        <th>Phone</th>
+                       
                     </tr>
+                    {% for c in custumers  %}
+                    <tr>
+                        <td>{{ c.name }}</td>
+                        <td>{{ c.phone }}</td>
+                       
+                    </tr>
+                {% endfor %}
                 </table>
             </div>
 
@@ -28,10 +36,19 @@
                     <tr>
                         <th>Product</th>
                         <th>Date Order</th>
-                        <th>Static</th>
+                        <th>Status</th>
                         <th>Update</th>
                         <th>Removee</th>
                     </tr>
+                        {% for o in orders  %}
+                    <tr>
+                         <td>{{ o.product.name }}</td>
+                        <td>{{ o.date_created }}</td>
+                        <td>{{ o.status }}</td>
+                       <td><a href="">Uodate</a></td>
+                       <td><a href="">Delete</a></td>
+                    </tr>
+                {% endfor %}
                 </table>
             </div>
         </div>

@@ -9,8 +9,12 @@ class Custumer(models.Model):
     
     
     def __str__(self):
-        return self.name
+       return self.name
 
+
+
+
+        
 class Product(models.Model):
     CATEGORY = (
         ("Indor", "Indor"),
@@ -21,6 +25,10 @@ class Product(models.Model):
     category = models.CharField(max_length = 150, null=True , choices=CATEGORY)
     description = models.CharField(max_length = 150, null=True)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
+
+
+    def __str__(self):
+       return self.name
     
     
 class Order(models.Model):
@@ -30,6 +38,11 @@ class Order(models.Model):
             ('Delivred', 'Delivred')
         )
     date_created = models.DateTimeField(auto_now_add=True)
+    customer = models.ForeignKey(Custumer, on_delete=models.CASCADE, null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     status = models.CharField(max_length = 150, choices=STATUS)
+
+    def __str__(self):
+       return self.status
     
     
