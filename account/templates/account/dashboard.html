@@ -18,9 +18,9 @@
                     </tr>
                     {% for c in custumers  %}
                     <tr>
+                       <th><a href={% url 'customer' c.pk %} class="btn btn-info">View</a></th>
                         <td>{{ c.name }}</td>
                         <td>{{ c.phone }}</td>
-                       
                     </tr>
                 {% endfor %}
                 </table>
@@ -31,7 +31,6 @@
             <h1>Last 5 order</h1>
             <br>
             <div class="card card-body">
-                <a href="" class="btn btn-primary btn-block">Create Order</a>
                 <table class="table table-sm">
                     <tr>
                         <th>Product</th>
@@ -45,8 +44,8 @@
                          <td>{{ o.product.name }}</td>
                         <td>{{ o.date_created }}</td>
                         <td>{{ o.status }}</td>
-                       <td><a href="">Uodate</a></td>
-                       <td><a href="">Delete</a></td>
+                       <td><a href={% url 'updateOrder' o.pk %} class="btn btn-warning">Uodate</a></td>
+                       <td><a href={% url 'deleteOrder' o.pk %} class="btn btn-danger">Delete</a></td>
                     </tr>
                 {% endfor %}
                 </table>

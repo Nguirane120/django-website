@@ -6,23 +6,23 @@
         <div class="col-md-4">
                 <h5>Custumers</h5>
             <div class="card card-body">
-                <a href="" class="btn btn-outline-info btn-sm btn-block">Update Custumer</a>
-                <a href="" class="btn btn-outline-danger btn-sm btn-block">delete Custumer</a>
+                <a href={% url 'createOrder' custumer.pk %} class="btn btn-outline-info btn-sm btn-block">Update Custumer</a>
+                <a href="" class="btn btn-outline-info btn-sm btn-block">delete Custumer</a>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card card-body">
                 <h5>Contact information</h5>
                 <hr>
-                <p>Email:</p>
-                <p>Phone:</p>
+                <p>Email: {{ custumer.email}}</p>
+                <p>Phone:{{custumer.phone}}</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card card-body">
                 <h5>Total Orders</h5>
                 <hr>
-                <h1 style="text-align: center; padding: 10px"></h1>
+                <h1 style="text-align: center; padding: 10px"> {{orders_count}} </h1>
             </div>
         </div>
    </div>
@@ -50,6 +50,16 @@
                         <th>Update</th>
                         <th>Remove</th>
                     </tr>
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order.product}}</td>
+                            <td>{{ order.product.category}}</td>
+                            <td>{{ order.date_created}}</td>
+                            <td>{{ order.status}}</td>
+                             <td><a href={% url 'updateOrder' order.pk %} class="btn btn-warning">Uodate</a></td>
+                       <td><a href={% url 'deleteOrder' order.pk %} class="btn btn-danger">Delete</a></td>
+                        </tr>
+                    {% endfor %}
                 </table>
             </div>
        </div>
