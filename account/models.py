@@ -41,6 +41,8 @@ class Order(models.Model):
     customer = models.ForeignKey(Custumer, on_delete=models.CASCADE, null=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     status = models.CharField(max_length = 150, choices=STATUS)
+    note = models.CharField(max_length = 100, null=True)
+    
 
     def __str__(self):
        return self.status

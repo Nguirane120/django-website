@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.forms import inlineformset_factory
 from .models import *
 from .forms import OrderForm
-# Create your views here.
+from .searchs import SearchFilter
 
 def home(request):
     custumers = Custumer.objects.all()
@@ -26,7 +26,9 @@ def custumer(request, pk):
     custumer = Custumer.objects.get(id=pk)
     orders = custumer.order_set.all()
     orders_count = orders.count()
-    context = {"custumer":custumer, "orders":orders, "orders_count":orders_count}
+    search = SearchFilter(request.GET, queryset=orders)
+    orders = search.qs
+    context = {"custumer":custumer, "orders":orders, "orders_count":orders_count, "search":search}
     return render(request, 'account/custumer.html', context)
 
 def createOrder(request, pk):

@@ -4,7 +4,7 @@
    <br>
    <div class="row">
         <div class="col-md-4">
-                <h5>Custumers</h5>
+                <h5>Custumers: {{custumer.name}}</h5>
             <div class="card card-body">
                 <a href={% url 'createOrder' custumer.pk %} class="btn btn-outline-info btn-sm btn-block">Update Custumer</a>
                 <a href="" class="btn btn-outline-info btn-sm btn-block">delete Custumer</a>
@@ -31,6 +31,7 @@
         <div class="col">
             <div class="card card-body">
                 <form action="" method="get">
+                {{ search.form }}
                     <button type="submit" class="btn btn-primary">search</button>
                 </form>
             </div>
@@ -44,7 +45,7 @@
                 <table class="table table-sm">
                     <tr>
                         <th>Product</th>
-                        <th>Category</th>
+                        <th>Note</th>
                         <th>Date Order</th>
                         <th>Status</th>
                         <th>Update</th>
@@ -53,7 +54,7 @@
                     {% for order in orders %}
                         <tr>
                             <td>{{ order.product}}</td>
-                            <td>{{ order.product.category}}</td>
+                            <td>{{ order.note}}</td>
                             <td>{{ order.date_created}}</td>
                             <td>{{ order.status}}</td>
                              <td><a href={% url 'updateOrder' order.pk %} class="btn btn-warning">Uodate</a></td>
