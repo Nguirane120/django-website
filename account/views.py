@@ -1,4 +1,6 @@
+from unicodedata import name
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.forms import inlineformset_factory
 from .models import *
 from .forms import OrderForm, CreateUserform
@@ -7,8 +9,19 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
+from .decorators import admin_only, unauthenticated_user, allowed_user
 
 
+
+
+
+
+def userProfile(request):
+    context = {}
+    return render(request, 'account/profile.html', context)
+
+@unauthenticated_user
 def registerPage(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -17,10 +30,14 @@ def registerPage(request):
         if request.method == 'POST':
             sign = CreateUserform(request.POST)
             if sign.is_valid():
-                sign.save()
+                user = sign.save()
                 username = sign.cleaned_data.get('username')
+
+                group = Group.objects.get(name='customer')
+                user.groups.add(group)
                 
                 messages.success(request, "Account was created for " + username)
+                return redirect('login')
         context = {"sign":sign}
         return render(request, 'account/register.html', context)
         
@@ -51,6 +68,8 @@ def logOutUser(request):
     return redirect('login')
 
 @login_required(login_url='login')
+@allowed_user(allowed_roles=['admin'])
+@admin_only
 def home(request):
     custumers = Custumer.objects.all()
     total_customers = Custumer.objects.count()
@@ -82,39 +101,51 @@ def custumer(request, pk):
 
 @login_required(login_url='login')
 def createOrder(request, pk):
-    OrderFormSet = inlineformset_factory(Custumer, Order, fields=('product', 'status'), extra=10)
-    customer = Custumer.objects.get(id=pk)
-    # form = OrderForm(initial={"customer":customer})
-    form_set = OrderFormSet(queryset = Order.objects.none(), instance=customer)
-    if request.method == 'POST':
-        # form = OrderForm(request.POST)
-        form_set = OrderFormSet(request.POST, instance=customer)
+    if request.user.is_staff:
+        OrderFormSet = inlineformset_factory(Custumer, Order, fields=('product', 'status'), extra=10)
+        customer = Custumer.objects.get(id=pk)
+        # form = OrderForm(initial={"customer":customer})
+        form_set = OrderFormSet(queryset = Order.objects.none(), instance=customer)
+        if request.method == 'POST':
+            # form = OrderForm(request.POST)
+            form_set = OrderFormSet(request.POST, instance=customer)
 
-        if form_set.is_valid():
-            form_set.save()
-            return redirect('/')
-    context= {"form_set":form_set}
-    return render(request, "account/order_form.html", context)
+            if form_set.is_valid():
+                form_set.save()
+                return redirect('/')
+        context= {"form_set":form_set}
+        return render(request, "account/order_form.html", context)
+    else:
+        return HttpResponse("Vous n'etes pas autorise a voir cette page")
+        
 
 @login_required(login_url='login')
 def updateeOrder(request, pk):
-    order = Order.objects.get(id=pk)
-    form = OrderForm(instance=order)
-    if request.method == 'POST':
-        form = OrderForm(request.POST, instance=order)
-        if form.is_valid():
-            form.save()
-            return redirect('/')
-    context= {"form":form}
-    return render(request, "account/order_form.html", context)
+    if request.user.is_staff:
+        order = Order.objects.get(id=pk)
+        form = OrderForm(instance=order)
+        if request.method == 'POST':
+            form = OrderForm(request.POST, instance=order)
+            if form.is_valid():
+                form.save()
+                return redirect('/')
+        context= {"form":form}
+        return render(request, "account/order_form.html", context)
+    else:
+        return HttpResponse("")
+
+        
 
 @login_required(login_url='login')
 def deleteOrder(request, pk):
-    order = Order.objects.get(id=pk)
-    if request.method == "POST":
-        order.delete()
-        return redirect('/')
-    context = {"order":order}
-    return render(request, 'account/delete_order.html', context)
+    if request.user.is_staff:
+        order = Order.objects.get(id=pk)
+        if request.method == "POST":
+            order.delete()
+            return redirect('/')
+        context = {"order":order}
+        return render(request, 'account/delete_order.html', context)
+    else:
+        return HttpResponse("Vous n'etes autorise a faire cette action")
 
 
