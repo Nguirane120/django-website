@@ -15,10 +15,18 @@ from .decorators import admin_only, unauthenticated_user, allowed_user
 
 
 
-
-
+# @login_required('login')
+# @allowed_user(allowed_roles=['customer'])
 def userProfile(request):
-    context = {}
+    orders = request.user.custumer.order_set.all()
+    total_orders = Order.objects.count()
+    total_delivred = Order.objects.filter(status='Delivred').count()
+    total_pending = Order.objects.filter(status='Pending').count()
+    context = {"orders":orders,
+                "total_orders":total_orders,
+                "total_delivred":total_delivred,
+                "total_pending":total_pending}
+
     return render(request, 'account/profile.html', context)
 
 @unauthenticated_user
@@ -35,6 +43,7 @@ def registerPage(request):
 
                 group = Group.objects.get(name='customer')
                 user.groups.add(group)
+                Custumer.objects.create(user=user)
                 
                 messages.success(request, "Account was created for " + username)
                 return redirect('login')
